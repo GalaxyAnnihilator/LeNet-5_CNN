@@ -16,20 +16,22 @@ def allowed_file(filename):
 def upload_file():
     if request.method == "POST":
         if "file" not in request.files:
-            return "No file part"
+            return "No file part", 400  # <-- Return proper error message
+        
         file = request.files["file"]
+        
         if file.filename == "":
-            return "No selected file"
+            return "No selected file", 400  # <-- Handle empty filename
+        
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
             file.save(filepath)
-            
-            # Predict the uploaded image
+
             predicted_label, confidence = predict_image(filepath)
 
             return render_template("result.html", filename=filename, label=predicted_label, confidence=confidence)
-    
+
     return render_template("index.html")
 
 if __name__ == "__main__":
