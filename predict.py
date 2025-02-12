@@ -16,6 +16,7 @@ def predict_image(img_path):
     img_array = np.expand_dims(img_array, axis=0)  # Add batch dimension
     
     predictions = model.predict(img_array)
+    predictions = tf.nn.softmax(predictions).numpy()
     predicted_class = np.argmax(predictions[0])
     
     return class_names[predicted_class], predictions[0][predicted_class]
